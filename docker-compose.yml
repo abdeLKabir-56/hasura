@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hasura_test
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  graphql-engine:
+    image: hasura/graphql-engine:v2.34.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:password@postgres:5432/hasura_test
+      HASURA_GRAPHQL_ADMIN_SECRET: hasura_admin_secret
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_JWT_SECRET: '{"type": "HS256", "key": "lCnwyCB4AWCc4LQiWguikcDvgbgjr0qu5HmoS/SSHgE="}'
+      HASURA_GRAPHQL_METADATA_DIR: /metadata/${ENVIRONMENT}
+      HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /assets
+      HASURA_GRAPHQL_READONLY_MODE: "false"
+    volumes:
+      - ./metadata:/metadata
+      - "C:/Users/info/Desktop/hasura-test/assets:/assets"
+
+volumes:
+  postgres_data:
